@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace Shortcuts</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 3rem;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .shortcut-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .shortcut-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .shortcut-card.sheets {
+            background: linear-gradient(135deg, #0f9d58 0%, #0d7d46 100%);
+        }
+
+        .shortcut-card.docs {
+            background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
+        }
+
+        .shortcut-card.slides {
+            background: linear-gradient(135deg, #f4b400 0%, #db8b00 100%);
+        }
+
+        .shortcut-card.drive {
+            background: linear-gradient(135deg, #ea4335 0%, #c5221f 100%);
+        }
+
+        .shortcut-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .shortcut-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .shortcut-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #999;
+            padding: 3rem;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .shortcuts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Workspace Shortcuts</h1>
+        <p class="subtitle">Quick access to your important documents</p>
+        
+        <input type="text" 
+               class="search-box" 
+               id="searchInput" 
+               placeholder="Search shortcuts...">
+        
+        <div class="shortcuts-grid" id="shortcutsGrid"></div>
+        <div class="no-results" id="noResults" style="display: none;">
+            No shortcuts found matching your search.
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURATION - Edit your links here
+        // ============================================
+        const shortcuts = [
+            {
+                title: "Q4 Budget Spreadsheet",
+                description: "Financial planning and expenses",
+                url: "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE",
+                type: "sheets",
+                icon: "📊"
+            },
+            {
+                title: "Team Project Plan",
+                description: "Timeline and milestones",
+                url: "https://docs.google.com/document/d/YOUR_DOC_ID_HERE",
+                type: "docs",
+                icon: "📝"
+            },
+            {
+                title: "Marketing Dashboard",
+                description: "Campaign metrics and KPIs",
+                url: "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE",
+                type: "sheets",
+                icon: "📈"
+            },
+            {
+                title: "Meeting Notes",
+                description: "Weekly standup documentation",
+                url: "https://docs.google.com/document/d/YOUR_DOC_ID_HERE",
+                type: "docs",
+                icon: "📋"
+            },
+            {
+                title: "Product Roadmap",
+                description: "Feature planning and priorities",
+                url: "https://docs.google.com/presentation/d/YOUR_SLIDES_ID_HERE",
+                type: "slides",
+                icon: "🎯"
+            },
+            {
+                title: "Shared Resources",
+                description: "Team files and templates",
+                url: "https://drive.google.com/drive/folders/YOUR_FOLDER_ID_HERE",
+                type: "drive",
+                icon: "📁"
+            }
+        ];
+
+        // ============================================
+        // APP LOGIC - No need to edit below this line
+        // ============================================
+        const grid = document.getElementById('shortcutsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const noResults = document.getElementById('noResults');
+
+        function renderShortcuts(items) {
+            grid.innerHTML = '';
+            
+            if (items.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+
+            items.forEach(shortcut => {
+                const card = document.createElement('a');
+                card.className = `shortcut-card ${shortcut.type}`;
+                card.href = shortcut.url;
+                card.target = '_blank';
+                card.rel = 'noopener noreferrer';
+                
+                card.innerHTML = `
+                    <div class="shortcut-icon">${shortcut.icon}</div>
+                    <div class="shortcut-title">${shortcut.title}</div>
+                    <div class="shortcut-description">${shortcut.description}</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function filterShortcuts(query) {
+            const filtered = shortcuts.filter(shortcut => 
+                shortcut.title.toLowerCase().includes(query.toLowerCase()) ||
+                shortcut.description.toLowerCase().includes(query.toLowerCase())
+            );
+            renderShortcuts(filtered);
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            filterShortcuts(e.target.value);
+        });
+
+        // Initial render
+        renderShortcuts(shortcuts);
+    </script>
+</body>
+</html>
