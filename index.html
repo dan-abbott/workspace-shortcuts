@@ -42,13 +42,18 @@
             font-size: 1.1rem;
         }
 
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
         .search-box {
-            width: 100%;
+            flex: 1;
             padding: 1rem 1.5rem;
             font-size: 1rem;
             border: 2px solid #e0e0e0;
             border-radius: 50px;
-            margin-bottom: 2rem;
             transition: all 0.3s;
         }
 
@@ -56,6 +61,23 @@
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .add-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .shortcuts-grid {
@@ -74,6 +96,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            position: relative;
         }
 
         .shortcut-card:hover {
@@ -113,11 +136,171 @@
             opacity: 0.9;
         }
 
+        .shortcut-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .shortcut-card:hover .delete-btn {
+            display: flex;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 0, 0, 0.8);
+        }
+
         .no-results {
             text-align: center;
             color: #999;
             padding: 3rem;
             font-size: 1.1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         @media (max-width: 768px) {
@@ -129,8 +312,16 @@
                 font-size: 2rem;
             }
 
+            .controls {
+                flex-direction: column;
+            }
+
             .shortcuts-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -140,10 +331,13 @@
         <h1>📚 Workspace Shortcuts</h1>
         <p class="subtitle">Quick access to your important documents</p>
         
-        <input type="text" 
-               class="search-box" 
-               id="searchInput" 
-               placeholder="Search shortcuts...">
+        <div class="controls">
+            <input type="text" 
+                   class="search-box" 
+                   id="searchInput" 
+                   placeholder="Search shortcuts...">
+            <button class="add-btn" id="addBtn">+ Add Personal</button>
+        </div>
         
         <div class="shortcuts-grid" id="shortcutsGrid"></div>
         <div class="no-results" id="noResults" style="display: none;">
@@ -151,48 +345,117 @@
         </div>
     </div>
 
+    <!-- Add/Edit Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Personal Shortcut</h2>
+                <button class="close-btn" id="closeBtn">&times;</button>
+            </div>
+            <form id="shortcutForm">
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-input" id="titleInput" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="descriptionInput" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">URL</label>
+                    <input type="url" class="form-input" id="urlInput" placeholder="https://docs.google.com/..." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select class="form-select" id="typeInput" required>
+                        <option value="sheets">Google Sheets</option>
+                        <option value="docs">Google Docs</option>
+                        <option value="slides">Google Slides</option>
+                        <option value="drive">Google Drive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Icon (emoji)</label>
+                    <input type="text" class="form-input" id="iconInput" placeholder="📊" maxlength="2" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Shortcut</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // ============================================
-        // CONFIGURATION - Edit your links here
+        // CONFIGURATION - Edit your shared links here
         // ============================================
-        const shortcuts = [
+        const sharedShortcuts = [
             {
                 title: "Soft Allocation Request",
                 description: "Generate the soft allocation request to Finance",
                 url: "https://docs.google.com/spreadsheets/d/1WXJqDC7VQ-Og9MfsVrcAAjep8ih_-aEGDfrBbQstK3M/edit?usp=drive_link",
                 type: "sheets",
-                icon: "📊"
+                icon: "📊",
+                shared: true
             },
             {
                 title: "HDR Deck",
                 description: "The HDR Deck - Includes creating new project workbooks and slides",
                 url: "https://docs.google.com/presentation/d/1UQfYV46tIKVwQdwWzqyOIfBiDQ2MvLYmScAKGX0fLL8/edit?usp=drive_link",
-                type: "sheets",
-                icon: "📝"
+                type: "slides",
+                icon: "📝",
+                shared: true
             },
             {
                 title: "Status Report Template",
                 description: "The Status Report Template",
                 url: "https://docs.google.com/spreadsheets/d/1qlrzh6YrhDt8z1e1LqcG4a85Py5oERdUqUdZLgJSBF0/edit?usp=drive_link",
                 type: "sheets",
-                icon: "📈"
+                icon: "📈",
+                shared: true
             },
             {
                 title: "Team Templates",
                 description: "Templates generated by the PM Team",
                 url: "https://drive.google.com/drive/folders/1P5ujTmUnwllf11U7WUsNtid8AELXtSe-?usp=drive_link",
                 type: "drive",
-                icon: "📁"
+                icon: "📁",
+                shared: true
             }
         ];
 
         // ============================================
         // APP LOGIC - No need to edit below this line
         // ============================================
+        const STORAGE_KEY = 'personalShortcuts';
+        
         const grid = document.getElementById('shortcutsGrid');
         const searchInput = document.getElementById('searchInput');
         const noResults = document.getElementById('noResults');
+        const modal = document.getElementById('modal');
+        const addBtn = document.getElementById('addBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const shortcutForm = document.getElementById('shortcutForm');
 
+        // Load personal shortcuts from browser storage
+        function getPersonalShortcuts() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        // Save personal shortcuts to browser storage
+        function savePersonalShortcuts(shortcuts) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(shortcuts));
+        }
+
+        // Get all shortcuts (shared + personal)
+        function getAllShortcuts() {
+            return [...sharedShortcuts, ...getPersonalShortcuts()];
+        }
+
+        // Render shortcuts
         function renderShortcuts(items) {
             grid.innerHTML = '';
             
@@ -205,14 +468,19 @@
             grid.style.display = 'grid';
             noResults.style.display = 'none';
 
-            items.forEach(shortcut => {
+            items.forEach((shortcut, index) => {
                 const card = document.createElement('a');
                 card.className = `shortcut-card ${shortcut.type}`;
                 card.href = shortcut.url;
                 card.target = '_blank';
                 card.rel = 'noopener noreferrer';
                 
+                const badge = shortcut.shared ? '<span class="shortcut-badge">Shared</span>' : '<span class="shortcut-badge">Personal</span>';
+                const deleteBtn = shortcut.shared ? '' : `<button class="delete-btn" onclick="deleteShortcut(event, '${shortcut.id}')">×</button>`;
+                
                 card.innerHTML = `
+                    ${deleteBtn}
+                    ${badge}
                     <div class="shortcut-icon">${shortcut.icon}</div>
                     <div class="shortcut-title">${shortcut.title}</div>
                     <div class="shortcut-description">${shortcut.description}</div>
@@ -222,20 +490,77 @@
             });
         }
 
+        // Filter shortcuts
         function filterShortcuts(query) {
-            const filtered = shortcuts.filter(shortcut => 
+            const filtered = getAllShortcuts().filter(shortcut => 
                 shortcut.title.toLowerCase().includes(query.toLowerCase()) ||
                 shortcut.description.toLowerCase().includes(query.toLowerCase())
             );
             renderShortcuts(filtered);
         }
 
+        // Delete personal shortcut
+        window.deleteShortcut = function(event, id) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            if (confirm('Delete this shortcut?')) {
+                const personal = getPersonalShortcuts().filter(s => s.id !== id);
+                savePersonalShortcuts(personal);
+                renderShortcuts(getAllShortcuts());
+            }
+        };
+
+        // Show modal
+        function showModal() {
+            modal.classList.add('active');
+            shortcutForm.reset();
+        }
+
+        // Hide modal
+        function hideModal() {
+            modal.classList.remove('active');
+        }
+
+        // Handle form submission
+        shortcutForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const newShortcut = {
+                id: Date.now().toString(),
+                title: document.getElementById('titleInput').value,
+                description: document.getElementById('descriptionInput').value,
+                url: document.getElementById('urlInput').value,
+                type: document.getElementById('typeInput').value,
+                icon: document.getElementById('iconInput').value,
+                shared: false
+            };
+
+            const personal = getPersonalShortcuts();
+            personal.push(newShortcut);
+            savePersonalShortcuts(personal);
+            
+            hideModal();
+            renderShortcuts(getAllShortcuts());
+        });
+
+        // Event listeners
         searchInput.addEventListener('input', (e) => {
             filterShortcuts(e.target.value);
         });
 
+        addBtn.addEventListener('click', showModal);
+        closeBtn.addEventListener('click', hideModal);
+        cancelBtn.addEventListener('click', hideModal);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                hideModal();
+            }
+        });
+
         // Initial render
-        renderShortcuts(shortcuts);
+        renderShortcuts(getAllShortcuts());
     </script>
 </body>
 </html>
